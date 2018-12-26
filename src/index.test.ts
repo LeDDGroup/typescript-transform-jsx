@@ -96,4 +96,28 @@ const type = "number";
 `
     );
   });
+
+  it("should convert elements iniside functions", () => {
+    test(
+      `\
+interface Person {
+name: string;
+type: "programmer" | "user";
+}
+
+const App = (props: { persons: Person[] }) => (
+  <ul>
+    {props.persons.map(person => (
+      <li>
+        {person.name} is a {person.type} hello
+      </li>
+    ))}
+  </ul>
+);
+`,
+      `\
+const App = (props) => (\`<ul>\${props.persons.map(person => (\`<li>\${person.name} is a \${person.type} hello</li>\`))}</ul>\`);
+`
+    );
+  });
 });
