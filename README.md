@@ -18,14 +18,28 @@ Typescript transform jsx to string
 $ npm i -D typescript-transform-jsx
 ```
 
-See [typescript-jsx-to-string](https://github.com/LeDDGroup/typescript-jsx-to-string) or [ttypescript](https://github.com/cevek/ttypescript/) to use this package
+## Usage with [ttypescript](https://github.com/cevek/ttypescript/)
 
-## Usage
+Add it to _plugin_ in your _tsconfig.json_
 
-Set the `jsx` flag to `preserve` in your _tsconfig_ file. Then create a `types.ts` with the following content:
+```json
+{
+  "compilerOptions": {
+    "jsx": "react-native",
+    "plugins": [{ "transform": "typescript-transform-jsx", "type": "raw" }]
+  }
+}
+```
+
+See https://github.com/danielpa9708/test-typescript-transform-jsx
+
+## Setup
+
+Set the `jsx` flag to `react-native` or `preserve` in your _tsconfig_ file. Then create a `types.ts` with the following content:
 
 ```ts
 declare namespace JSX {
+  type Element = string;
   interface IntrinsicElements {
     [element: string]: {
       [property: string]: any;
