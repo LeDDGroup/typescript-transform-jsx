@@ -40,6 +40,9 @@ Set the `jsx` flag to `react-native` or `preserve` in your _tsconfig_ file. Then
 ```ts
 declare namespace JSX {
   type Element = string;
+  interface ElementChildrenAttribute {
+    children: any;
+  }
   interface IntrinsicElements {
     [element: string]: {
       [property: string]: any;
@@ -53,17 +56,16 @@ This will declare custom JSX so you don't need react typings.
 ## Example
 
 ```tsx
-// app.tsx
 interface Person {
   name: string;
-  type: "programmer" | "user";
+  age: number;
 }
 
 const App = (props: { persons: Person[] }) => (
   <ul>
     {props.persons.map(person => (
       <li>
-        {person.name} is a {person.type}
+        {person.name} is {person.age} years old
       </li>
     ))}
   </ul>
@@ -73,10 +75,9 @@ const App = (props: { persons: Person[] }) => (
 Gets compiled to:
 
 ```js
-// app.js
 const App = props =>
   `<ul>${props.persons.map(
-    person => `<li>${person.name} is a ${person.type}</li>`
+    person => `<li>${person.name} is ${person.age} years old</li>`
   )}</ul>`;
 ```
 

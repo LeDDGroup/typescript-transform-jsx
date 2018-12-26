@@ -102,21 +102,21 @@ const type = "number";
       `\
 interface Person {
 name: string;
-type: "programmer" | "user";
+age: number;
 }
 
 const App = (props: { persons: Person[] }) => (
   <ul>
     {props.persons.map(person => (
       <li>
-        {person.name} is a {person.type} hello
+        {person.name} is {person.age} years old
       </li>
     ))}
   </ul>
 );
 `,
       `\
-const App = (props) => (\`<ul>\${props.persons.map(person => (\`<li>\${person.name} is a \${person.type} hello</li>\`))}</ul>\`);
+const App = (props) => (\`<ul>\${props.persons.map(person => (\`<li>\${person.name} is \${person.age} years old</li>\`))}</ul>\`);
 `
     );
   });
