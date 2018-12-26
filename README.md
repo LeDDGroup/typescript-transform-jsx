@@ -39,19 +39,31 @@ This will declare custom JSX so you don't need react typings.
 ## Example
 
 ```tsx
-// home.tsx
-export default function Home(props: { name: string }) {
-  return <h1>Hello {props.name}</h1>;
+// app.tsx
+interface Person {
+  name: string;
+  type: "programmer" | "user";
 }
+
+const App = (props: { persons: Person[] }) => (
+  <ul>
+    {props.persons.map(person => (
+      <li>
+        {person.name} is a {person.type}
+      </li>
+    ))}
+  </ul>
+);
 ```
 
 Gets compiled to:
 
 ```js
-// home.js
-exports.default = function Home(props) {
-  return `<h1>Hello ${props.name}</h1>`;
-};
+// app.js
+const App = props =>
+  `<ul>${props.persons.map(
+    person => `<li>${person.name} is a ${person.type}</li>`
+  )}</ul>`;
 ```
 
 ## Roadmap/Caveats
