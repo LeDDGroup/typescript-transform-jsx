@@ -47,7 +47,51 @@ const transformer = <T extends ts.Node>(context: ts.TransformationContext) => (
     result.add(">");
   }
 
+  function getPropertyAssigmentFromAttribute(
+    property: ts.JsxAttributeLike
+  ): ts.PropertyAssignment {
+    if (property.kind === ts.SyntaxKind.JsxSpreadAttribute) {
+      throw new Error("Spread operator not implemented");
+    }
+    const name = property.name.getText();
+    const value = property.initializer
+      ? property.initializer.kind === ts.SyntaxKind.JsxExpression
+        ? property.initializer.expression!
+        : ts.createLiteral(property.initializer.text)
+      : ts.createLiteral(true);
+    return ts.createPropertyAssignment(name, value);
+  }
+
+  function getStringFromJsxElementComponent(
+    node: ts.JsxElement,
+    result: StringCreator
+  ) {
+    const parameters = node.openingElement.attributes.properties.map(
+      getPropertyAssigmentFromAttribute
+    );
+    const childrenStringCreator = new StringCreator();
+    for (const child of node.children) {
+      getStringFromJsxChild(child, childrenStringCreator);
+    }
+    const childrenParameter = ts.createPropertyAssignment(
+      "children",
+      childrenStringCreator.getTemplateExpression()
+    );
+    parameters.push(childrenParameter);
+    result.add(
+      ts.createCall(
+        node.openingElement.tagName,
+        [],
+        [ts.createObjectLiteral(parameters)]
+      )
+    );
+  }
+
   function getStringFromJsxElement(node: ts.JsxElement, result: StringCreator) {
+    if (node.openingElement.tagName.getText().match(/[A-Z]/)) {
+      getStringFromJsxElementComponent(node, result);
+      return;
+    }
     getStringFromOpeningElement(node.openingElement, result);
     for (const child of node.children) {
       getStringFromJsxChild(child, result);
@@ -64,10 +108,26 @@ const transformer = <T extends ts.Node>(context: ts.TransformationContext) => (
     }
   }
 
+  function getStringFromJsxSelfClosingElementComponent(
+    node: ts.JsxSelfClosingElement,
+    result: StringCreator
+  ) {
+    const parameters = node.attributes.properties.map(
+      getPropertyAssigmentFromAttribute
+    );
+    result.add(
+      ts.createCall(node.tagName, [], [ts.createObjectLiteral(parameters)])
+    );
+  }
+
   function getStringFromJsxSelfClosingElement(
     node: ts.JsxSelfClosingElement,
     result: StringCreator
   ) {
+    if (node.tagName.getText().match(/[A-Z]/)) {
+      getStringFromJsxSelfClosingElementComponent(node, result);
+      return;
+    }
     result.add("<", node.tagName.getText());
     getStringFromAttributes(node.attributes, result);
     result.add(">");
@@ -100,6 +160,7 @@ const transformer = <T extends ts.Node>(context: ts.TransformationContext) => (
     }
     return result;
   }
+
   function visit(node: ts.Node): ts.Node {
     if (grabJsx.indexOf(node.kind) !== -1)
       return getStringFromJsxChild(node as any).getTemplateExpression();

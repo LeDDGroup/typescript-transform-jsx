@@ -120,4 +120,34 @@ const App = (props) => (\`<ul>\${props.persons.map(person => (\`<li>\${person.na
 `
     );
   });
+
+  it("should convert function components", () => {
+    test(
+      `\
+function LabeledInput(props: { type: string, children: string }) { return (<div><label>{props.children}</label><input type={type} /></div>); }
+const name = "world";
+<LabeledInput type="number">Hello <h1>{name}</h1></LabeledInput>;
+`,
+      `\
+function LabeledInput(props) { return (\`<div><label>\${props.children}</label><input type=\${type}></input></div>\`); }
+const name = "world";
+\`\${LabeledInput({ type: "number", children: \`Hello <h1>\${name}</h1>\` })}\`;
+`
+    );
+  });
+
+  it("should convert self closing function components", () => {
+    test(
+      `\
+function LabeledInput(props: { type: string }) { return (<input type={type} />); }
+const type = "number";
+<LabeledInput type={type}/>;
+`,
+      `\
+function LabeledInput(props) { return (\`<input type=\${type}></input>\`); }
+const type = "number";
+\`\${LabeledInput({ type: type })}\`;
+`
+    );
+  });
 });

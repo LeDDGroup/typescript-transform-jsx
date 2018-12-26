@@ -81,25 +81,6 @@ const App = props =>
   )}</ul>`;
 ```
 
-## Roadmap/Caveats
-
-- Support nested components, eg this wont work:
-
-```tsx
-function LabeledInput(props: { label: string }) {
-  return (
-    <div>
-      <label>{props.label}</label>
-      <input />
-    </div>
-  );
-}
-
-function App() {
-  return <LabeledInput label="hello" />;
-}
-```
-
 ## Contributing
 
 If you have any question or idea of a feature create an issue in github or make an PR.
