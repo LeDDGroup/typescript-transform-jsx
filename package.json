@@ -1,0 +1,53 @@
+{
+  "name": "typescript-transform-jsx",
+  "version": "1.0.0",
+  "description": "Typescript transform jsx to string",
+  "keywords": [
+    "typescript"
+  ],
+  "homepage": "https://github.com/LeDDGroup/typescript-transform-jsx#readme",
+  "bugs": {
+    "url": "https://github.com/LeDDGroup/typescript-transform-jsx/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/LeDDGroup/typescript-transform-jsx.git"
+  },
+  "license": "MIT",
+  "author": "Daniel Perez Alvarez <danielpza@protonmail.com>",
+  "files": [
+    "dist"
+  ],
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "prebuild": "rm -rf dist",
+    "build": "tsc -p tsconfig-build.json",
+    "prepare": "npm run build",
+    "release": "standard-version",
+    "test": "jest"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm test && pretty-quick --staged",
+      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
+    }
+  },
+  "jest": {
+    "preset": "ts-jest",
+    "testEnvironment": "node"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@commitlint/cli": "^7.2.1",
+    "@commitlint/config-conventional": "^7.1.2",
+    "@types/jest": "^23.3.9",
+    "husky": "^1.1.2",
+    "jest": "^23.6.0",
+    "prettier": "^1.13.7",
+    "pretty-quick": "^1.8.0",
+    "standard-version": "^4.4.0",
+    "ts-jest": "^23.10.4",
+    "typescript": "^3.1.6"
+  }
+}
