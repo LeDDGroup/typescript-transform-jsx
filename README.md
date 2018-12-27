@@ -31,7 +31,7 @@ Add it to _plugin_ in your _tsconfig.json_
 }
 ```
 
-See https://github.com/danielpa9708/test-typescript-transform-jsx
+See https://github.com/danielpa9708/test-typescript-transform-jsx and https://github.com/danielpa9708/-koa-jsx-example
 
 ## Setup
 
