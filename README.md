@@ -81,6 +81,32 @@ const App = props =>
   )}</ul>`;
 ```
 
+## Roadmap/Caveats
+
+- `.map` constructions needs to be converted to string manually, otherwise elements will be joined with a comma, as a workaround explicitly join the array:
+
+```tsx
+// Bad
+const arr = ["hello", "world"];
+const App = () => (
+  <div>
+    {arr.map(msg => (
+      <h1>{msg}</h1>
+    ))}
+  </div>
+);
+
+// Workaround
+const arr = ["hello", "world"];
+const App = () => <div>{arr.map(msg => <h1>{msg}</h1>).join("")}</div>;
+```
+
+- Spread operators are not working, eg this wont work:
+
+```tsx
+const Pass = (props: any) => <div {...props} />;
+```
+
 ## Contributing
 
 If you have any question or idea of a feature create an issue in github or make an PR.
