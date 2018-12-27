@@ -11,8 +11,18 @@ export class StringCreator {
       }
     }
   }
-  public getTemplateExpression(): ts.TemplateExpression | ts.StringLiteral {
+  public getTemplateExpression():
+    | ts.TemplateExpression
+    | ts.StringLiteral
+    | ts.Expression {
     if (this.body.length === 1) return ts.createLiteral(this.body[0][1]);
+    if (
+      this.body.length === 2 &&
+      this.body[0][1] === "" &&
+      this.body[1][1] === ""
+    ) {
+      return this.body[1][0];
+    }
     const head = ts.createTemplateHead(this.body[0][1]);
     const body = this.body.slice(1).map(([node, lit], index, arr) => {
       return ts.createTemplateSpan(

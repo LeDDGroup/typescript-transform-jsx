@@ -131,7 +131,7 @@ const name = "world";
       `\
 function LabeledInput(props) { return (\`<div><label>\${props.children}</label><input type=\${type}></input></div>\`); }
 const name = "world";
-\`\${LabeledInput({ type: "number", children: \`Hello <h1>\${name}</h1>\` })}\`;
+LabeledInput({ type: "number", children: \`Hello <h1>\${name}</h1>\` });
 `
     );
   });
@@ -146,7 +146,7 @@ const type = "number";
       `\
 function LabeledInput(props) { return (\`<input type=\${type}></input>\`); }
 const type = "number";
-\`\${LabeledInput({ type: type })}\`;
+LabeledInput({ type: type });
 `
     );
   });
