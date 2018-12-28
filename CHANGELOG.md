@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.2.0"></a>
+
+# [1.2.0](https://github.com/LeDDGroup/typescript-transform-jsx/compare/v1.1.0...v1.2.0) (2018-12-28)
+
+### Features
+
+- only output expression if there's no need for template ([1656acf](https://github.com/LeDDGroup/typescript-transform-jsx/commit/1656acf))
+
 <a name="1.1.0"></a>
 
 # [1.1.0](https://github.com/LeDDGroup/typescript-transform-jsx/compare/v1.0.1...v1.1.0) (2018-12-26)
