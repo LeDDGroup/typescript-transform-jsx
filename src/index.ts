@@ -29,8 +29,11 @@ const transformer = <T extends ts.Node>(context: ts.TransformationContext) => (
           property.initializer &&
           property.initializer.kind === ts.SyntaxKind.JsxExpression
         ) {
-          result.add(" " + property.name.getText() + "=");
-          result.add(property.initializer.expression!);
+          result.add(
+            ` ${property.name.getText()}="`,
+            property.initializer.expression!,
+            `"`
+          );
         } else {
           result.add(" " + property.getText());
         }

@@ -38,7 +38,7 @@ const className = "container";
 `,
       `\
 const className = "container";
-\`<div className=\${className} secondProp=\${123}>Hello World</div>\`;
+\`<div className="\${className}" secondProp="\${123}">Hello World</div>\`;
 `
     );
   });
@@ -53,7 +53,7 @@ const content = "Hello World";
       `\
 const className = "container";
 const content = "Hello World";
-\`<div className=\${className} secondProp=\${123}>\${content}</div>\`;
+\`<div className="\${className}" secondProp="\${123}">\${content}</div>\`;
 `
     );
   });
@@ -68,7 +68,7 @@ const content = "Hello World";
       `\
 const className = "container";
 const content = "Hello World";
-\`<div secondProp="hello"><a className=\${className}>\${content}</a></div>\`;
+\`<div secondProp="hello"><a className="\${className}">\${content}</a></div>\`;
 `
     );
   });
@@ -92,7 +92,7 @@ const type = "number";
 `,
       `\
 const type = "number";
-\`<input type=\${type}></input>\`;
+\`<input type="\${type}"></input>\`;
 `
     );
   });
@@ -129,7 +129,7 @@ const name = "world";
 <LabeledInput type="number">Hello <h1>{name}</h1></LabeledInput>;
 `,
       `\
-function LabeledInput(props) { return (\`<div><label>\${props.children}</label><input type=\${type}></input></div>\`); }
+function LabeledInput(props) { return (\`<div><label>\${props.children}</label><input type="\${type}"></input></div>\`); }
 const name = "world";
 LabeledInput({ type: "number", children: \`Hello <h1>\${name}</h1>\` });
 `
@@ -144,7 +144,7 @@ const type = "number";
 <LabeledInput type={type}/>;
 `,
       `\
-function LabeledInput(props) { return (\`<input type=\${type}></input>\`); }
+function LabeledInput(props) { return (\`<input type="\${type}"></input>\`); }
 const type = "number";
 LabeledInput({ type: type });
 `
