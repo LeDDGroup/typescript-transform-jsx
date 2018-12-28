@@ -4,14 +4,15 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "ttsc && js2file pre/pages --ext html --outDir dist",
+    "build": "TS_NODE_COMPILER=ttypescript js2file src/pages --ext html --outDir dist --require ts-node/register",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "js-to-file": "^1.0.0",
+    "js-to-file": "^1.1.0",
+    "ts-node": "^7.0.1",
     "ttypescript": "^1.5.5",
     "typescript": "^3.2.2",
     "typescript-transform-jsx": "^1.1.0"
