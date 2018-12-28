@@ -1,0 +1,19 @@
+{
+  "name": "example-tsx-to-html",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "ttsc && js2file pre/pages --ext html --outDir dist",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "js-to-file": "^1.0.0",
+    "ttypescript": "^1.5.5",
+    "typescript": "^3.2.2",
+    "typescript-transform-jsx": "^1.1.0"
+  }
+}

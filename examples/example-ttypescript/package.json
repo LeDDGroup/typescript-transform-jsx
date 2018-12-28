@@ -1,0 +1,14 @@
+{
+  "name": "example-ttypescript",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "build": "ttsc",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "license": "ISC",
+  "dependencies": {
+    "ttypescript": "^1.5.5",
+    "typescript": "^3.2.2"
+  }
+}

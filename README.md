@@ -12,6 +12,8 @@ Typescript transform jsx to string
 - Transform jsx to string in compilation time
 - Fast runtime
 
+See [examples](https://github.com/LeDDGroup/typescript-transform-jsx/tree/master/examples)
+
 ## Install
 
 ```sh
@@ -31,7 +33,7 @@ Add it to _plugin_ in your _tsconfig.json_
 }
 ```
 
-See https://github.com/danielpa9708/test-typescript-transform-jsx and https://github.com/danielpa9708/-koa-jsx-example
+See https://github.com/LeDDGroup/typescript-transform-jsx/tree/master/examples/example-ttypescript
 
 ## Setup
 
