@@ -6,6 +6,17 @@
 
 Typescript transform jsx to string
 
+**Table of Contents**
+
+- [typescript-transform-jsx](#typescript-transform-jsx)
+  - [Motivation](#motivation)
+  - [Install](#install)
+  - [Usage with ttypescript](#usage-with-ttypescripthttpsgithubcomcevekttypescript)
+  - [Setup](#setup)
+  - [Example](#example)
+  - [Roadmap/Caveats](#roadmapcaveats)
+  - [Contributing](#contributing)
+
 ## Motivation
 
 - Typesafe templates
