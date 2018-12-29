@@ -1,0 +1,10 @@
+{
+  "compilerOptions": {
+    "target": "es6",
+    "module": "commonjs",
+    "jsx": "react-native",
+    "rootDir": "src",
+    "outDir": "dist",
+    "plugins": [{ "transform": "../..", "type": "raw" }]
+  }
+}

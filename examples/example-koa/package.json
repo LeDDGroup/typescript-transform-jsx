@@ -1,0 +1,25 @@
+{
+  "name": "example-koa",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/index.js",
+  "scripts": {
+    "start": "ts-node -C ttypescript -T src/index.ts",
+    "build": "ttsc",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/koa": "^2.0.47",
+    "@types/koa-router": "^7.0.35",
+    "ts-node": "^7.0.1",
+    "ttypescript": "^1.5.5",
+    "typescript": "^3.2.2"
+  },
+  "dependencies": {
+    "koa": "^2.6.2",
+    "koa-router": "^7.4.0"
+  }
+}
