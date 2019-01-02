@@ -3,7 +3,7 @@ import transformer from "./index";
 
 describe("transformer", () => {
   const compilerOptions = {
-    target: ts.ScriptTarget.ES2016,
+    target: ts.ScriptTarget.ESNext,
     module: ts.ModuleKind.CommonJS,
     jsx: ts.JsxEmit.Preserve
   };
@@ -136,7 +136,7 @@ LabeledInput({ type: "number", children: \`Hello <h1>\${name}</h1>\` });
     );
   });
 
-  it("should convert self closing function components", () => {
+  it("should convert self closing function elements", () => {
     test(
       `\
 function LabeledInput(props: { type: string }) { return (<input type={type} />); }
@@ -147,6 +147,21 @@ const type = "number";
 function LabeledInput(props) { return (\`<input type="\${type}"></input>\`); }
 const type = "number";
 LabeledInput({ type: type });
+`
+    );
+  });
+
+  it("should allow spread expressions in function elements", () => {
+    test(
+      `\
+const options = { class: "container" };
+const App = (props) => <div class={props.class}></div>;
+<App {...options}></App>;
+`,
+      `\
+const options = { class: "container" };
+const App = (props) => \`<div class="\${props.class}"></div>\`;
+App({ ...options, children: "" });
 `
     );
   });

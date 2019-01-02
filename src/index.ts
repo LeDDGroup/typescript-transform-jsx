@@ -50,11 +50,11 @@ const transformer = <T extends ts.Node>(context: ts.TransformationContext) => (
     result.add(">");
   }
 
-  function getPropertyAssigmentFromAttribute(
+  function getObjectLiteralElementFromAttribute(
     property: ts.JsxAttributeLike
-  ): ts.PropertyAssignment {
+  ): ts.ObjectLiteralElementLike {
     if (property.kind === ts.SyntaxKind.JsxSpreadAttribute) {
-      throw new Error("Spread operator not implemented");
+      return ts.createSpreadAssignment(property.expression);
     }
     const name = property.name.getText();
     const value = property.initializer
@@ -70,7 +70,7 @@ const transformer = <T extends ts.Node>(context: ts.TransformationContext) => (
     result: StringCreator
   ) {
     const parameters = node.openingElement.attributes.properties.map(
-      getPropertyAssigmentFromAttribute
+      getObjectLiteralElementFromAttribute
     );
     const childrenStringCreator = new StringCreator();
     for (const child of node.children) {
@@ -116,7 +116,7 @@ const transformer = <T extends ts.Node>(context: ts.TransformationContext) => (
     result: StringCreator
   ) {
     const parameters = node.attributes.properties.map(
-      getPropertyAssigmentFromAttribute
+      getObjectLiteralElementFromAttribute
     );
     result.add(
       ts.createCall(node.tagName, [], [ts.createObjectLiteral(parameters)])

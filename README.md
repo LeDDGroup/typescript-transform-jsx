@@ -114,10 +114,11 @@ const arr = ["hello", "world"];
 const App = () => <div>{arr.map(msg => <h1>{msg}</h1>).join("")}</div>;
 ```
 
-- Spread operators are not working, eg this wont work:
+- Spread operators are not working in native elements:
 
 ```tsx
-const Pass = (props: any) => <div {...props} />;
+const Pass = props => <div {...props} />; // ok: spread operators on "div" element doesn't work
+const App = props => <Pass {...props} />; // bad: spread operators on function elements does work
 ```
 
 ## Contributing
