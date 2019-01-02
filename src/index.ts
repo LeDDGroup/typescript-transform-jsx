@@ -118,6 +118,9 @@ const transformer = <T extends ts.Node>(context: ts.TransformationContext) => (
     const parameters = node.attributes.properties.map(
       getObjectLiteralElementFromAttribute
     );
+    parameters.push(
+      ts.createPropertyAssignment("children", ts.createLiteral(""))
+    );
     result.add(
       ts.createCall(node.tagName, [], [ts.createObjectLiteral(parameters)])
     );

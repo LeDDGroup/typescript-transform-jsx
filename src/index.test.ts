@@ -146,7 +146,7 @@ const type = "number";
       `\
 function LabeledInput(props) { return (\`<input type="\${type}"></input>\`); }
 const type = "number";
-LabeledInput({ type: type });
+LabeledInput({ type: type, children: "" });
 `
     );
   });
