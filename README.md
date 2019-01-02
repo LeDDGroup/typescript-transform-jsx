@@ -114,6 +114,14 @@ const arr = ["hello", "world"];
 const App = () => <div>{arr.map(msg => <h1>{msg}</h1>).join("")}</div>;
 ```
 
+Another workaround would be to modify the `Array.toString` method, note that changing prototypes of standard javascript objects is discourage:
+
+```ts
+Array.prototype.toString = function<T>(this: T[]) {
+  return this.join("");
+};
+```
+
 - Spread operators are not working in native elements:
 
 ```tsx
