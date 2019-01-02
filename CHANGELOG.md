@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.3.0"></a>
+
+# [1.3.0](https://github.com/LeDDGroup/typescript-transform-jsx/compare/v1.2.1...v1.3.0) (2019-01-02)
+
+### Bug Fixes
+
+- pass empty "" children value on self closing function element ([652fa72](https://github.com/LeDDGroup/typescript-transform-jsx/commit/652fa72))
+
+### Features
+
+- support spread expressions on function elements ([27a021a](https://github.com/LeDDGroup/typescript-transform-jsx/commit/27a021a))
+
 <a name="1.2.1"></a>
 
 ## [1.2.1](https://github.com/LeDDGroup/typescript-transform-jsx/compare/v1.2.0...v1.2.1) (2018-12-28)
