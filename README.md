@@ -34,7 +34,7 @@ $ npm i -D typescript-transform-jsx
 
 ## Usage with [ttypescript](https://github.com/cevek/ttypescript/)
 
-Add it to _plugin_ in your _tsconfig.json_
+Add it to _plugins_ in your _tsconfig.json_
 
 ```json
 {
@@ -97,7 +97,7 @@ const App = props =>
 
 ## Roadmap/Caveats
 
-- `.map` constructions needs to be converted to string manually, otherwise elements will be joined with a comma, as a workaround explicitly join the array:
+- `.map` constructions need to be converted to string manually, otherwise elements will be joined with a comma, as a workaround explicitly join the array:
 
 ```tsx
 // Bad
@@ -115,7 +115,7 @@ const arr = ["hello", "world"];
 const App = () => <div>{arr.map(msg => <h1>{msg}</h1>).join("")}</div>;
 ```
 
-Another workaround would be to modify the `Array.toString` method, note that changing prototypes of standard javascript objects is discourage:
+Another workaround would be to modify the `Array.toString` method, note that changing prototypes of standard javascript objects is discouraged:
 
 ```ts
 Array.prototype.toString = function<T>(this: T[]) {
@@ -126,8 +126,8 @@ Array.prototype.toString = function<T>(this: T[]) {
 - Spread operators are not working in native elements:
 
 ```tsx
-const Pass = props => <div {...props} />; // ok: spread operators on "div" element doesn't work
-const App = props => <Pass {...props} />; // bad: spread operators on function elements does work
+const Pass = props => <div {...props} />; // ok: spread operators on "div" element don't work
+const App = props => <Pass {...props} />; // bad: spread operators on function elements do work
 ```
 
 ## Contributing
