@@ -40,7 +40,7 @@ Add it to _plugins_ in your _tsconfig.json_
 {
   "compilerOptions": {
     "jsx": "react-native",
-    "plugins": [{ "transform": "typescript-transform-jsx", "type": "raw" }]
+    "plugins": [{ "transform": "typescript-transform-jsx" }]
   }
 }
 ```
@@ -90,44 +90,18 @@ Gets compiled to:
 
 ```js
 const App = props =>
-  `<ul>${props.persons.map(
-    person => `<li>${person.name} is ${person.age} years old</li>`
-  )}</ul>`;
+  `<ul>${props.persons
+    .map(person => `<li>${person.name} is ${person.age} years old</li>`)
+    .join("")}</ul>`;
 ```
 
 ## Roadmap/Caveats
 
-- `.map` constructions need to be converted to string manually, otherwise elements will be joined with a comma, as a workaround explicitly join the array:
-
-```tsx
-// Bad
-const arr = ["hello", "world"];
-const App = () => (
-  <div>
-    {arr.map(msg => (
-      <h1>{msg}</h1>
-    ))}
-  </div>
-);
-
-// Workaround
-const arr = ["hello", "world"];
-const App = () => <div>{arr.map(msg => <h1>{msg}</h1>).join("")}</div>;
-```
-
-Another workaround would be to modify the `Array.toString` method, note that changing prototypes of standard javascript objects is discouraged:
-
-```ts
-Array.prototype.toString = function<T>(this: T[]) {
-  return this.join("");
-};
-```
-
 - Spread operators are not working in native elements:
 
 ```tsx
-const Pass = props => <div {...props} />; // ok: spread operators on "div" element don't work
-const App = props => <Pass {...props} />; // bad: spread operators on function elements do work
+const Pass = props => <div {...props} />; // bad: spread operators on "div" element don't work
+const App = props => <Pass {...props} />; // ok: spread operators on function elements do work
 ```
 
 ## Contributing

@@ -19,19 +19,17 @@ export default (props: {
       </head>
       <navbar>
         <ul>
-          {links
-            .map(({ id, url, text }) => (
-              <li>
-                {id === props.active ? (
-                  <h3>
-                    <a href={url}>{text}</a>
-                  </h3>
-                ) : (
+          {links.map(({ id, url, text }) => (
+            <li>
+              {id === props.active ? (
+                <h3>
                   <a href={url}>{text}</a>
-                )}
-              </li>
-            ))
-            .join("")}
+                </h3>
+              ) : (
+                <a href={url}>{text}</a>
+              )}
+            </li>
+          ))}
         </ul>
       </navbar>
       <body>{props.children}</body>

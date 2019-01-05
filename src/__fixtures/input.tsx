@@ -35,3 +35,5 @@ function Control(props: { label: string; children: any }) {
   <h1>Hello</h1>
 </Control>;
 <Control {...{ label: "hello", children: "world" }} />;
+// array
+<ul>{[1, 2, 3].map((el) => <li>{el}</li>)}</ul>;

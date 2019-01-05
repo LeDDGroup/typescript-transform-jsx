@@ -28,7 +28,7 @@ function compile(file: string, options: ts.CompilerOptions): string {
     undefined,
     undefined,
     {
-      after: [transformer]
+      after: [transformer(program)]
     }
   );
   return content;

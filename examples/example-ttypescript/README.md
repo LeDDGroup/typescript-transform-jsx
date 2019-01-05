@@ -24,7 +24,7 @@ export const App = (props: { persons: Person[] }) => (
 ```js
 // src/home.js
 exports.App = props =>
-  `<ul>${props.persons.map(
-    person => `<li>${person.name} is ${person.age} years old</li>`
-  )}</ul>`;
+  `<ul>${props.persons
+    .map(person => `<li>${person.name} is ${person.age} years old</li>`)
+    .join("")}</ul>`;
 ```

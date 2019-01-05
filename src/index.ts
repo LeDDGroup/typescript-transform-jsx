@@ -1,9 +1,13 @@
 import * as ts from "typescript";
 import { StringCreator } from "./string-creator";
 
-const transformer = <T extends ts.Node>(context: ts.TransformationContext) => (
+function transform<T extends ts.Node>(
+  program: ts.Program | undefined,
+  context: ts.TransformationContext,
   rootNode: T
-) => {
+): T {
+  const typeChecker = program && program.getTypeChecker();
+
   const grabJsx = [
     ts.SyntaxKind.JsxElement,
     ts.SyntaxKind.JsxFragment,
@@ -159,7 +163,22 @@ const transformer = <T extends ts.Node>(context: ts.TransformationContext) => (
         result.add(text);
         break;
       case ts.SyntaxKind.JsxExpression:
-        result.add(ts.visitNode(node.expression!, visit));
+        const newNode = ts.visitNode(node.expression!, visit);
+        if (typeChecker) {
+          const type = typeChecker.getTypeAtLocation(newNode);
+          const symbol = type.getSymbol();
+          if (symbol && symbol.getName() === "Array") {
+            result.add(
+              ts.createCall(
+                ts.createPropertyAccess(newNode, "join"),
+                [],
+                [ts.createLiteral("")]
+              )
+            );
+            break;
+          }
+        }
+        result.add(newNode);
         break;
       default:
         throw new Error("NOT IMPLEMENTED"); // TODO improve error message
@@ -173,6 +192,24 @@ const transformer = <T extends ts.Node>(context: ts.TransformationContext) => (
     return ts.visitEachChild(node, visit, context);
   }
   return ts.visitNode(rootNode, visit);
-};
+}
+
+function transformer<T extends ts.Node>(program: ts.Program): ts.Transformer<T>;
+function transformer<T extends ts.Node>(
+  context: ts.TransformationContext
+): (node: T) => T;
+function transformer<T extends ts.Node>(
+  programOrContext: ts.Program | ts.TransformationContext
+) {
+  if (isProgram(programOrContext)) {
+    return (context: ts.TransformationContext) => (node: T) =>
+      transform(programOrContext, context, node);
+  }
+  return (node: T) => transform(undefined, programOrContext, node);
+}
+
+function isProgram(t: object): t is ts.Program {
+  return "getTypeChecker" in t;
+}
 
 export default transformer;

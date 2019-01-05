@@ -12,3 +12,5 @@ function Control(props) {
 Control({ label: "hello", children: [1, 2, 3].map(el => `<p>${el}</p>`).join("") });
 Control({ label: "world", children: "<h1>Hello</h1>" });
 Control({ ...{ label: "hello", children: "world" }, children: "" });
+// array
+`<ul>${[1, 2, 3].map((el) => `<li>${el}</li>`).join("")}</ul>`;
