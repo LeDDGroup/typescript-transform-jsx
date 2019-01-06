@@ -1,0 +1,12 @@
+{
+  "groups": {
+    "default": {
+      "packages": [
+        "examples/example-koa/package.json",
+        "examples/example-tsx-to-html/package.json",
+        "examples/example-ttypescript/package.json",
+        "package.json"
+      ]
+    }
+  }
+}
