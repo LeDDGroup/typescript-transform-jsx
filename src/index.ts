@@ -1,30 +1,29 @@
 import * as ts from "typescript";
 import { StringCreator } from "./string-creator";
 
-function transform<T extends ts.Node>(
-  program: ts.Program | undefined,
-  context: ts.TransformationContext,
-  rootNode: T
-): T {
-  const typeChecker = program && program.getTypeChecker();
+const grabJsx = [
+  ts.SyntaxKind.JsxElement,
+  ts.SyntaxKind.JsxFragment,
+  ts.SyntaxKind.JsxSelfClosingElement
+];
 
-  const grabJsx = [
-    ts.SyntaxKind.JsxElement,
-    ts.SyntaxKind.JsxFragment,
-    ts.SyntaxKind.JsxSelfClosingElement
-  ];
+class Transformer {
+  private typeChecker: ts.TypeChecker | undefined;
+  constructor(
+    program: ts.Program | undefined,
+    private context: ts.TransformationContext
+  ) {
+    this.typeChecker = program && program.getTypeChecker();
+  }
 
-  function getStringFromClosingElement(
+  getStringFromClosingElement(
     node: ts.JsxClosingElement,
     result: StringCreator
   ) {
     result.add(`</${node.tagName.getText()}>`);
   }
 
-  function getStringFromAttributes(
-    node: ts.JsxAttributes,
-    result: StringCreator
-  ) {
+  getStringFromAttributes(node: ts.JsxAttributes, result: StringCreator) {
     for (const property of node.properties) {
       if (property.kind === ts.SyntaxKind.JsxSpreadAttribute) {
         result.add(
@@ -99,16 +98,16 @@ function transform<T extends ts.Node>(
     }
   }
 
-  function getStringFromOpeningElement(
+  getStringFromOpeningElement(
     node: ts.JsxOpeningElement,
     result: StringCreator
   ) {
     result.add(`<${node.tagName.getText()}`);
-    getStringFromAttributes(node.attributes, result);
+    this.getStringFromAttributes(node.attributes, result);
     result.add(">");
   }
 
-  function getObjectLiteralElementFromAttribute(
+  getObjectLiteralElementFromAttribute(
     property: ts.JsxAttributeLike
   ): ts.ObjectLiteralElementLike {
     if (property.kind === ts.SyntaxKind.JsxSpreadAttribute) {
@@ -123,16 +122,13 @@ function transform<T extends ts.Node>(
     return ts.createPropertyAssignment(name, value);
   }
 
-  function getStringFromJsxElementComponent(
-    node: ts.JsxElement,
-    result: StringCreator
-  ) {
+  getStringFromJsxElementComponent(node: ts.JsxElement, result: StringCreator) {
     const parameters = node.openingElement.attributes.properties.map(
-      getObjectLiteralElementFromAttribute
+      this.getObjectLiteralElementFromAttribute.bind(this)
     );
     const childrenStringCreator = new StringCreator();
     for (const child of node.children) {
-      getStringFromJsxChild(child, childrenStringCreator);
+      this.getStringFromJsxChild(child, childrenStringCreator);
     }
     const childrenParameter = ts.createPropertyAssignment(
       "children",
@@ -148,33 +144,30 @@ function transform<T extends ts.Node>(
     );
   }
 
-  function getStringFromJsxElement(node: ts.JsxElement, result: StringCreator) {
+  getStringFromJsxElement(node: ts.JsxElement, result: StringCreator) {
     if (node.openingElement.tagName.getText().match(/[A-Z]/)) {
-      getStringFromJsxElementComponent(node, result);
+      this.getStringFromJsxElementComponent(node, result);
       return;
     }
-    getStringFromOpeningElement(node.openingElement, result);
+    this.getStringFromOpeningElement(node.openingElement, result);
     for (const child of node.children) {
-      getStringFromJsxChild(child, result);
+      this.getStringFromJsxChild(child, result);
     }
-    getStringFromClosingElement(node.closingElement, result);
+    this.getStringFromClosingElement(node.closingElement, result);
   }
 
-  function getStringFromJsxFragment(
-    node: ts.JsxFragment,
-    result: StringCreator
-  ) {
+  getStringFromJsxFragment(node: ts.JsxFragment, result: StringCreator) {
     for (const child of node.children) {
-      getStringFromJsxChild(child, result);
+      this.getStringFromJsxChild(child, result);
     }
   }
 
-  function getStringFromJsxSelfClosingElementComponent(
+  getStringFromJsxSelfClosingElementComponent(
     node: ts.JsxSelfClosingElement,
     result: StringCreator
   ) {
     const parameters = node.attributes.properties.map(
-      getObjectLiteralElementFromAttribute
+      this.getObjectLiteralElementFromAttribute.bind(this)
     );
     parameters.push(
       ts.createPropertyAssignment("children", ts.createLiteral(""))
@@ -184,42 +177,39 @@ function transform<T extends ts.Node>(
     );
   }
 
-  function getStringFromJsxSelfClosingElement(
+  getStringFromJsxSelfClosingElement(
     node: ts.JsxSelfClosingElement,
     result: StringCreator
   ) {
     if (node.tagName.getText().match(/[A-Z]/)) {
-      getStringFromJsxSelfClosingElementComponent(node, result);
+      this.getStringFromJsxSelfClosingElementComponent(node, result);
       return;
     }
     result.add("<", node.tagName.getText());
-    getStringFromAttributes(node.attributes, result);
+    this.getStringFromAttributes(node.attributes, result);
     result.add(">");
     result.add("</", node.tagName.getText(), ">");
   }
 
-  function getStringFromJsxChild(
-    node: ts.JsxChild,
-    result = new StringCreator()
-  ) {
+  getStringFromJsxChild(node: ts.JsxChild, result: StringCreator) {
     switch (node.kind) {
       case ts.SyntaxKind.JsxElement:
-        getStringFromJsxElement(node, result);
+        this.getStringFromJsxElement(node, result);
         break;
       case ts.SyntaxKind.JsxFragment:
-        getStringFromJsxFragment(node, result);
+        this.getStringFromJsxFragment(node, result);
         break;
       case ts.SyntaxKind.JsxSelfClosingElement:
-        getStringFromJsxSelfClosingElement(node, result);
+        this.getStringFromJsxSelfClosingElement(node, result);
         break;
       case ts.SyntaxKind.JsxText:
         const text = node.getFullText().replace(/\n */, "");
         result.add(text);
         break;
       case ts.SyntaxKind.JsxExpression:
-        const newNode = ts.visitNode(node.expression!, visit);
-        if (typeChecker) {
-          const type = typeChecker.getTypeAtLocation(newNode);
+        const newNode = ts.visitNode(node.expression!, this.visit.bind(this));
+        if (this.typeChecker) {
+          const type = this.typeChecker.getTypeAtLocation(newNode);
           const symbol = type.getSymbol();
           if (symbol && symbol.getName() === "Array") {
             result.add(
@@ -239,13 +229,17 @@ function transform<T extends ts.Node>(
     }
     return result;
   }
-
-  function visit(node: ts.Node): ts.Node {
-    if (grabJsx.indexOf(node.kind) !== -1)
-      return getStringFromJsxChild(node as any).getTemplateExpression();
-    return ts.visitEachChild(node, visit, context);
+  visit(node: ts.Node): ts.Node {
+    if (grabJsx.indexOf(node.kind) !== -1) {
+      const result = new StringCreator();
+      this.getStringFromJsxChild(node as any, result);
+      return result.getTemplateExpression();
+    }
+    return ts.visitEachChild(node, this.visit.bind(this), this.context);
   }
-  return ts.visitNode(rootNode, visit);
+  transform<T extends ts.Node>(rootNode: T): T {
+    return ts.visitNode(rootNode, this.visit.bind(this));
+  }
 }
 
 function transformer<T extends ts.Node>(
@@ -259,9 +253,10 @@ function transformer<T extends ts.Node>(
 ) {
   if (isProgram(programOrContext)) {
     return (context: ts.TransformationContext) => (node: T) =>
-      transform(programOrContext, context, node);
+      new Transformer(programOrContext, context).transform(node);
   }
-  return (node: T) => transform(undefined, programOrContext, node);
+  return (node: T) =>
+    new Transformer(undefined, programOrContext).transform(node);
 }
 
 function isProgram(t: object): t is ts.Program {
