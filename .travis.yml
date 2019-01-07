@@ -1,0 +1,12 @@
+language: node_js
+node_js:
+  - stable
+deploy:
+  provider: npm
+  email: danielpza@protonmail.com
+  skip_cleanup: true
+  api_key:
+    secure: 5RYUHdkraBHlw21kqyXkCO75yPyHPFh5Rciwo8iUwxF41snVYSnA99geSX0FC3h/L07q9KZBSIzs6bWi/EiD+nGsz22SaVUBhfKv3SOLrQa56wf4kMX3AWfhGeHurs+EP4OEMhUQXMGWQ9UvrgxnpS6GK0GCg+Vtbci84YAHVkolh2fNJPou7KxhXyEu0OaUJqPErN7a3579IYoznpyh53nxO0yz43T4S1NvaU3If5vFxsQLnh6UH5P2V7fn8VdG1rUadLcIUARxV7eTUBWb3rA11bSL/VxAieK/X5ClTzfD1cC7PoI3DR+2IF9BWqoENZ6htT591xNP+irxMVSQoUd7lG8ZE8IyAmXZBFS5Pvwo950g35wLxblHfyXCpxU+JzdKd9N+d/Q+CagfNvABR/dJmXfBHSq0551m2gYormBzHkCZJCtVG5gns0esF7fdrhUgOauZI6p0acWBuumZQAxp6o1iC2VXasJL+jURme4YJWW22bukAp6i3fpIWfeODz36AV8Yc51Ix28tDRFHiZPqIR52lvd+r/XVpdrvc/YIFi/HAwnCHFN5dorMq7v2TFgq7Zps0U3SPyvytzmfQMpk7RaTrmSuycdJx3cQ3twmtDHXLWekeoyDs+nKNnWef2Vs6M3h47voMPuCpii0ZWarMva1PJXGmv+oIHS63TQ=
+  on:
+    tags: true
+    repo: LeDDGroup/typescript-transform-jsx
