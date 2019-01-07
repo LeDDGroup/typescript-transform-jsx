@@ -23,77 +23,85 @@ class Transformer {
     result.add(`</${node.tagName.getText()}>`);
   }
 
+  getStringFromJsxSpreadAttribute(
+    node: ts.JsxSpreadAttribute,
+    result: StringCreator
+  ) {
+    result.add(
+      " ",
+      ts.createCall(
+        ts.createPropertyAccess(
+          ts.createCall(
+            ts.createPropertyAccess(ts.createIdentifier("Object"), "entries"),
+            [],
+            [ts.createSpread(node.expression)]
+          ),
+          "map"
+        ),
+        [],
+        [
+          ts.createArrowFunction(
+            undefined,
+            undefined,
+            [
+              ts.createParameter(
+                undefined,
+                undefined,
+                undefined,
+                ts.createArrayBindingPattern([
+                  ts.createBindingElement(
+                    undefined,
+                    undefined,
+                    "key",
+                    undefined
+                  ),
+                  ts.createBindingElement(
+                    undefined,
+                    undefined,
+                    "value",
+                    undefined
+                  )
+                ]),
+                undefined,
+                undefined,
+                undefined
+              )
+            ],
+            undefined,
+            undefined,
+            new StringCreator(
+              ts.createIdentifier("key"),
+              '="',
+              ts.createIdentifier("value"),
+              '"'
+            ).getTemplateExpression()
+          )
+        ]
+      )
+    );
+  }
+
+  getStringFromAttribute(node: ts.JsxAttribute, result: StringCreator) {
+    if (
+      node.initializer &&
+      node.initializer.kind === ts.SyntaxKind.JsxExpression
+    ) {
+      result.add(
+        ` ${node.name.getText()}="`,
+        node.initializer.expression!,
+        `"`
+      );
+    } else {
+      result.add(" " + node.getText());
+    }
+  }
+
   getStringFromAttributes(node: ts.JsxAttributes, result: StringCreator) {
     for (const property of node.properties) {
       if (property.kind === ts.SyntaxKind.JsxSpreadAttribute) {
-        result.add(
-          " ",
-          ts.createCall(
-            ts.createPropertyAccess(
-              ts.createCall(
-                ts.createPropertyAccess(
-                  ts.createIdentifier("Object"),
-                  "entries"
-                ),
-                [],
-                [ts.createSpread(property.expression)]
-              ),
-              "map"
-            ),
-            [],
-            [
-              ts.createArrowFunction(
-                undefined,
-                undefined,
-                [
-                  ts.createParameter(
-                    undefined,
-                    undefined,
-                    undefined,
-                    ts.createArrayBindingPattern([
-                      ts.createBindingElement(
-                        undefined,
-                        undefined,
-                        "key",
-                        undefined
-                      ),
-                      ts.createBindingElement(
-                        undefined,
-                        undefined,
-                        "value",
-                        undefined
-                      )
-                    ]),
-                    undefined,
-                    undefined,
-                    undefined
-                  )
-                ],
-                undefined,
-                undefined,
-                new StringCreator(
-                  ts.createIdentifier("key"),
-                  '="',
-                  ts.createIdentifier("value"),
-                  '"'
-                ).getTemplateExpression()
-              )
-            ]
-          )
-        );
+        this.getStringFromJsxSpreadAttribute(property, result);
       } else {
-        if (
-          property.initializer &&
-          property.initializer.kind === ts.SyntaxKind.JsxExpression
-        ) {
-          result.add(
-            ` ${property.name.getText()}="`,
-            property.initializer.expression!,
-            `"`
-          );
-        } else {
-          result.add(" " + property.getText());
-        }
+        this.getStringFromAttribute(property, result);
       }
     }
   }
@@ -191,6 +199,27 @@ class Transformer {
     result.add("</", node.tagName.getText(), ">");
   }
 
+  getStringFromJsxExpression(node: ts.JsxExpression, result: StringCreator) {
+    const newNode = ts.visitNode(node.expression!, this.visit.bind(this));
+    if (this.typeChecker) {
+      const type = this.typeChecker.getTypeAtLocation(newNode);
+      const symbol = type.getSymbol();
+      if (symbol && symbol.getName() === "Array") {
+        result.add(
+          ts.createCall(
+            ts.createPropertyAccess(newNode, "join"),
+            [],
+            [ts.createLiteral("")]
+          )
+        );
+      } else {
+        result.add(newNode);
+      }
+    } else {
+      result.add(newNode);
+    }
+  }
+
   getStringFromJsxChild(node: ts.JsxChild, result: StringCreator) {
     switch (node.kind) {
       case ts.SyntaxKind.JsxElement:
@@ -207,36 +236,23 @@ class Transformer {
         result.add(text);
         break;
       case ts.SyntaxKind.JsxExpression:
-        const newNode = ts.visitNode(node.expression!, this.visit.bind(this));
-        if (this.typeChecker) {
-          const type = this.typeChecker.getTypeAtLocation(newNode);
-          const symbol = type.getSymbol();
-          if (symbol && symbol.getName() === "Array") {
-            result.add(
-              ts.createCall(
-                ts.createPropertyAccess(newNode, "join"),
-                [],
-                [ts.createLiteral("")]
-              )
-            );
-            break;
-          }
-        }
-        result.add(newNode);
+        this.getStringFromJsxExpression(node, result);
         break;
       default:
         throw new Error("NOT IMPLEMENTED"); // TODO improve error message
     }
     return result;
   }
+
   visit(node: ts.Node): ts.Node {
     if (grabJsx.indexOf(node.kind) !== -1) {
       const result = new StringCreator();
-      this.getStringFromJsxChild(node as any, result);
+      this.getStringFromJsxChild(node as ts.JsxChild, result);
       return result.getTemplateExpression();
     }
     return ts.visitEachChild(node, this.visit.bind(this), this.context);
   }
+
   transform<T extends ts.Node>(rootNode: T): T {
     return ts.visitNode(rootNode, this.visit.bind(this));
   }
