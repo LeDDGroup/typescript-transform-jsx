@@ -2,6 +2,9 @@ import * as ts from "typescript";
 
 export class StringCreator {
   private body: [ts.Expression, string][] = [[null as any, ""]];
+  constructor(...els: (ts.Expression | string)[]) {
+    this.add(...els);
+  }
   public add(...els: (ts.Expression | string)[]) {
     for (const el of els) {
       if (typeof el === "string") {

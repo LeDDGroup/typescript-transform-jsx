@@ -37,3 +37,5 @@ function Control(props: { label: string; children: any }) {
 <Control {...{ label: "hello", children: "world" }} />;
 // array
 <ul>{[1, 2, 3].map((el) => <li>{el}</li>)}</ul>;
+// spread operators on html elements
+<div {...{ class: "container" }} />;

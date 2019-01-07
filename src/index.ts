@@ -27,7 +27,61 @@ function transform<T extends ts.Node>(
   ) {
     for (const property of node.properties) {
       if (property.kind === ts.SyntaxKind.JsxSpreadAttribute) {
-        throw new Error("Spread operator not implemented");
+        result.add(
+          " ",
+          ts.createCall(
+            ts.createPropertyAccess(
+              ts.createCall(
+                ts.createPropertyAccess(
+                  ts.createIdentifier("Object"),
+                  "entries"
+                ),
+                [],
+                [ts.createSpread(property.expression)]
+              ),
+              "map"
+            ),
+            [],
+            [
+              ts.createArrowFunction(
+                undefined,
+                undefined,
+                [
+                  ts.createParameter(
+                    undefined,
+                    undefined,
+                    undefined,
+                    ts.createArrayBindingPattern([
+                      ts.createBindingElement(
+                        undefined,
+                        undefined,
+                        "key",
+                        undefined
+                      ),
+                      ts.createBindingElement(
+                        undefined,
+                        undefined,
+                        "value",
+                        undefined
+                      )
+                    ]),
+                    undefined,
+                    undefined,
+                    undefined
+                  )
+                ],
+                undefined,
+                undefined,
+                new StringCreator(
+                  ts.createIdentifier("key"),
+                  '="',
+                  ts.createIdentifier("value"),
+                  '"'
+                ).getTemplateExpression()
+              )
+            ]
+          )
+        );
       } else {
         if (
           property.initializer &&

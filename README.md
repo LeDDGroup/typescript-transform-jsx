@@ -97,11 +97,17 @@ const App = props =>
 
 ## Roadmap/Caveats
 
-- Spread operators are not working in native elements:
+- Using spread operators on html elements require _esnext_ environment because it compiles down to `Object.entries` expression:
 
 ```tsx
-const Pass = props => <div {...props} />; // bad: spread operators on "div" element don't work
-const App = props => <Pass {...props} />; // ok: spread operators on function elements do work
+// input
+const props = { class: "container" };
+<div {...props} />;
+// output
+const props = { class: "container" };
+`<div ${Object.entries(...props).map(
+  ([key, value]) => `${key}="${value}"`
+)}></div>`;
 ```
 
 ## Contributing

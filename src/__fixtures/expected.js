@@ -14,3 +14,5 @@ Control({ label: "world", children: "<h1>Hello</h1>" });
 Control({ ...{ label: "hello", children: "world" }, children: "" });
 // array
 `<ul>${[1, 2, 3].map((el) => `<li>${el}</li>`).join("")}</ul>`;
+// spread operators on html elements
+`<div ${Object.entries(...{ class: "container" }).map(([key, value]) => `${key}="${value}"`)}></div>`;
