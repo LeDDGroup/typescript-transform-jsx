@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.5.0"></a>
+
+# [1.5.0](https://github.com/LeDDGroup/typescript-transform-jsx/compare/v1.4.0...v1.5.0) (2019-01-07)
+
+### Features
+
+- support spread operator on html elements ([bac0475](https://github.com/LeDDGroup/typescript-transform-jsx/commit/bac0475))
+
 <a name="1.4.0"></a>
 
 # [1.4.0](https://github.com/LeDDGroup/typescript-transform-jsx/compare/v1.3.0...v1.4.0) (2019-01-05)
