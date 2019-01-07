@@ -248,10 +248,12 @@ function transform<T extends ts.Node>(
   return ts.visitNode(rootNode, visit);
 }
 
-function transformer<T extends ts.Node>(program: ts.Program): ts.Transformer<T>;
+function transformer<T extends ts.Node>(
+  program: ts.Program
+): ts.TransformerFactory<T>;
 function transformer<T extends ts.Node>(
   context: ts.TransformationContext
-): (node: T) => T;
+): ts.Transformer<T>;
 function transformer<T extends ts.Node>(
   programOrContext: ts.Program | ts.TransformationContext
 ) {
