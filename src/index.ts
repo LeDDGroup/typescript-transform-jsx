@@ -1,5 +1,5 @@
 import * as ts from "typescript";
-import { StringCreator } from "./string-creator";
+import * as utils from "./utils";
 
 const grabJsx = [
   ts.SyntaxKind.JsxElement,
@@ -18,70 +18,40 @@ class Transformer {
 
   getStringFromClosingElement(
     node: ts.JsxClosingElement,
-    result: StringCreator
+    result: utils.StringTemplateHelper
   ) {
     result.add(`</${node.tagName.getText()}>`);
   }
 
   getStringFromJsxSpreadAttribute(
     node: ts.JsxSpreadAttribute,
-    result: StringCreator
+    result: utils.StringTemplateHelper
   ) {
     result.add(
       " ",
-      ts.createCall(
-        ts.createPropertyAccess(
-          ts.createCall(
-            ts.createPropertyAccess(ts.createIdentifier("Object"), "entries"),
-            [],
-            [ts.createSpread(node.expression)]
-          ),
-          "map"
-        ),
-        [],
-        [
-          ts.createArrowFunction(
-            undefined,
-            undefined,
-            [
-              ts.createParameter(
-                undefined,
-                undefined,
-                undefined,
-                ts.createArrayBindingPattern([
-                  ts.createBindingElement(
-                    undefined,
-                    undefined,
-                    "key",
-                    undefined
-                  ),
-                  ts.createBindingElement(
-                    undefined,
-                    undefined,
-                    "value",
-                    undefined
-                  )
-                ]),
-                undefined,
-                undefined,
-                undefined
-              )
-            ],
-            undefined,
-            undefined,
-            new StringCreator(
+      new utils.Identifier("Object")
+        .access("entries")
+        .call(ts.createSpread(node.expression))
+        .access("map")
+        .call(
+          new utils.ArrowFunction(
+            [["key", "value"]],
+            new utils.StringTemplateHelper(
               ts.createIdentifier("key"),
               '="',
               ts.createIdentifier("value"),
               '"'
-            ).getTemplateExpression()
-          )
-        ]
-      )
+            ).getNode()
+          ).getNode()
+        )
+        .getNode()
     );
   }
 
-  getStringFromAttribute(node: ts.JsxAttribute, result: StringCreator) {
+  getStringFromAttribute(
+    node: ts.JsxAttribute,
+    result: utils.StringTemplateHelper
+  ) {
     if (
       node.initializer &&
       node.initializer.kind === ts.SyntaxKind.JsxExpression
@@ -96,7 +66,10 @@ class Transformer {
     }
   }
 
-  getStringFromAttributes(node: ts.JsxAttributes, result: StringCreator) {
+  getStringFromAttributes(
+    node: ts.JsxAttributes,
+    result: utils.StringTemplateHelper
+  ) {
     for (const property of node.properties) {
       if (property.kind === ts.SyntaxKind.JsxSpreadAttribute) {
         this.getStringFromJsxSpreadAttribute(property, result);
@@ -108,7 +81,7 @@ class Transformer {
 
   getStringFromOpeningElement(
     node: ts.JsxOpeningElement,
-    result: StringCreator
+    result: utils.StringTemplateHelper
   ) {
     result.add(`<${node.tagName.getText()}`);
     this.getStringFromAttributes(node.attributes, result);
@@ -130,17 +103,20 @@ class Transformer {
     return ts.createPropertyAssignment(name, value);
   }
 
-  getStringFromJsxElementComponent(node: ts.JsxElement, result: StringCreator) {
+  getStringFromJsxElementComponent(
+    node: ts.JsxElement,
+    result: utils.StringTemplateHelper
+  ) {
     const parameters = node.openingElement.attributes.properties.map(
       this.getObjectLiteralElementFromAttribute.bind(this)
     );
-    const childrenStringCreator = new StringCreator();
+    const childrenResult = new utils.StringTemplateHelper();
     for (const child of node.children) {
-      this.getStringFromJsxChild(child, childrenStringCreator);
+      this.getStringFromJsxChild(child, childrenResult);
     }
     const childrenParameter = ts.createPropertyAssignment(
       "children",
-      childrenStringCreator.getTemplateExpression()
+      childrenResult.getNode()
     );
     parameters.push(childrenParameter);
     result.add(
@@ -152,7 +128,10 @@ class Transformer {
     );
   }
 
-  getStringFromJsxElement(node: ts.JsxElement, result: StringCreator) {
+  getStringFromJsxElement(
+    node: ts.JsxElement,
+    result: utils.StringTemplateHelper
+  ) {
     if (node.openingElement.tagName.getText().match(/[A-Z]/)) {
       this.getStringFromJsxElementComponent(node, result);
       return;
@@ -164,7 +143,10 @@ class Transformer {
     this.getStringFromClosingElement(node.closingElement, result);
   }
 
-  getStringFromJsxFragment(node: ts.JsxFragment, result: StringCreator) {
+  getStringFromJsxFragment(
+    node: ts.JsxFragment,
+    result: utils.StringTemplateHelper
+  ) {
     for (const child of node.children) {
       this.getStringFromJsxChild(child, result);
     }
@@ -172,7 +154,7 @@ class Transformer {
 
   getStringFromJsxSelfClosingElementComponent(
     node: ts.JsxSelfClosingElement,
-    result: StringCreator
+    result: utils.StringTemplateHelper
   ) {
     const parameters = node.attributes.properties.map(
       this.getObjectLiteralElementFromAttribute.bind(this)
@@ -187,7 +169,7 @@ class Transformer {
 
   getStringFromJsxSelfClosingElement(
     node: ts.JsxSelfClosingElement,
-    result: StringCreator
+    result: utils.StringTemplateHelper
   ) {
     if (node.tagName.getText().match(/[A-Z]/)) {
       this.getStringFromJsxSelfClosingElementComponent(node, result);
@@ -199,7 +181,10 @@ class Transformer {
     result.add("</", node.tagName.getText(), ">");
   }
 
-  getStringFromJsxExpression(node: ts.JsxExpression, result: StringCreator) {
+  getStringFromJsxExpression(
+    node: ts.JsxExpression,
+    result: utils.StringTemplateHelper
+  ) {
     const newNode = ts.visitNode(node.expression!, this.visit.bind(this));
     if (this.typeChecker) {
       const type = this.typeChecker.getTypeAtLocation(newNode);
@@ -220,7 +205,7 @@ class Transformer {
     }
   }
 
-  getStringFromJsxChild(node: ts.JsxChild, result: StringCreator) {
+  getStringFromJsxChild(node: ts.JsxChild, result: utils.StringTemplateHelper) {
     switch (node.kind) {
       case ts.SyntaxKind.JsxElement:
         this.getStringFromJsxElement(node, result);
@@ -246,9 +231,9 @@ class Transformer {
 
   visit(node: ts.Node): ts.Node {
     if (grabJsx.indexOf(node.kind) !== -1) {
-      const result = new StringCreator();
+      const result = new utils.StringTemplateHelper();
       this.getStringFromJsxChild(node as ts.JsxChild, result);
-      return result.getTemplateExpression();
+      return result.getNode();
     }
     return ts.visitEachChild(node, this.visit.bind(this), this.context);
   }
