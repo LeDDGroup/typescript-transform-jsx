@@ -5,6 +5,7 @@
 [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square)](https://github.com/prettier/prettier)
 [![Built with Spacemacs](https://cdn.rawgit.com/syl20bnr/spacemacs/442d025779da2f62fc86c2082703697714db6514/assets/spacemacs-badge.svg)](http://spacemacs.org)
 [![Greenkeeper badge](https://badges.greenkeeper.io/LeDDGroup/typescript-transform-jsx.svg)](https://greenkeeper.io/)
+[![Maintainability](https://api.codeclimate.com/v1/badges/4ee8f3e01be0a19931f8/maintainability)](https://codeclimate.com/github/LeDDGroup/typescript-transform-jsx/maintainability)
 
 Typescript transform jsx to string
 
