@@ -29,7 +29,7 @@
     "build": "tsc -p tsconfig-build.json",
     "prepare": "npm run build",
     "release": "standard-version",
-    "test": "jest"
+    "test": "jest --coverage"
   },
   "husky": {
     "hooks": {
