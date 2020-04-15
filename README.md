@@ -100,6 +100,10 @@ const App = props =>
 
 ## Roadmap/Caveats
 
+- Always handle `children` property implicitly
+
+- Self closing tags will be treated as such, (ie no children handling on the props)
+
 - Using spread operators on html elements require _esnext_ environment because it compiles down to `Object.entries` expression:
 
 ```tsx

@@ -1,35 +1,82 @@
 import * as ts from "typescript";
-import { readFileSync } from "fs";
-import { resolve } from "path";
 import transformer from "./index";
-
-describe("transformer", () => {
-  it("should compile", () => {
-    const inputFile = resolve(__dirname, "__fixtures/input.tsx");
-    const expectedFile = resolve(__dirname, "__fixtures/expected.js");
-    const result = compile(inputFile, compilerOptions);
-    const expected = readFileSync(expectedFile).toString();
-    expect(result).toBe(expected);
-  });
-});
+import safeEval from "safe-eval";
 
 const compilerOptions: ts.CompilerOptions = {
   target: ts.ScriptTarget.ESNext,
   module: ts.ModuleKind.CommonJS,
-  jsx: ts.JsxEmit.Preserve
+  jsx: ts.JsxEmit.Preserve,
 };
 
-function compile(file: string, options: ts.CompilerOptions): string {
-  let content = "";
-  const program = ts.createProgram([file], options);
-  program.emit(
-    undefined,
-    (_, result) => (content = result),
-    undefined,
-    undefined,
-    {
-      after: [transformer(program)]
-    }
-  );
-  return content;
+function compile(source: string) {
+  const { outputText } = ts.transpileModule(source, {
+    compilerOptions,
+    transformers: { after: [transformer] },
+  });
+  return outputText;
 }
+
+function runFunction(source: string) {
+  const compiled = compile(source);
+  const wrapped = `(function () {${compiled}})()`;
+  return safeEval(wrapped);
+}
+
+function run(source: string) {
+  return safeEval(compile(source));
+}
+
+function checkf(source: string, expected: string) {
+  const actual = runFunction(source);
+  expect(actual).toBe(expected);
+}
+
+function check(source: string, expected: string) {
+  const actual = run(source);
+  expect(actual).toBe(expected);
+}
+
+test("simple", () => {
+  check(
+    '<div className="container" moreProps="hello">Hello World</div>;',
+    '<div className="container" moreProps="hello">Hello World</div>'
+  );
+});
+
+test("interpolation", () => {
+  check('<div class={3}>{"hello"}</div>', '<div class="3">hello</div>');
+});
+
+test("fragments", () => {
+  check("<><h1>hello</h1><h2>world</h2></>", "<h1>hello</h1><h2>world</h2>");
+});
+
+test("More Complex", () => {
+  checkf(
+    `
+const Control = ({label, children}: any) => <div><label>{label}</label>{children}</div>
+return <Control label='hello'>world</Control>;
+`,
+    "<div><label>hello</label>world</div>"
+  );
+});
+
+test("spread", () => {
+  checkf(
+    `
+const Control = ({label, children}: any) => <div><label>{label}</label>{children}</div>
+return <Control {...{ label: "hello", children: "world" }} />;
+`,
+    "<div><label>hello</label>world</div>"
+  );
+});
+
+test("spread2", () => {
+  checkf(
+    `
+const Control = ({children, label, ...props}: any) => <label>{label}<a {...props}/></label>
+return <Control label='hello' placeholder='world' type='string' />;
+`,
+    '<label>hello<a placeholder="world" type="string"/></label>'
+  );
+});

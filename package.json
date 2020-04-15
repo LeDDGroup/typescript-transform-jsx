@@ -29,13 +29,7 @@
     "build": "tsc -p tsconfig-build.json",
     "prepare": "npm run build",
     "release": "standard-version",
-    "test": "jest --coverage"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "npm test && pretty-quick --staged",
-      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
-    }
+    "test": "jest"
   },
   "jest": {
     "preset": "ts-jest",
@@ -43,14 +37,10 @@
   },
   "dependencies": {},
   "devDependencies": {
-    "@commitlint/cli": "^7.2.1",
-    "@commitlint/config-conventional": "^7.1.2",
     "@types/jest": "^24.0.5",
     "@types/node": "^10.12.18",
-    "husky": "^1.1.2",
     "jest": "^23.6.0",
-    "prettier": "^1.13.7",
-    "pretty-quick": "^1.8.0",
+    "safe-eval": "^0.4.1",
     "standard-version": "^5.0.0",
     "ts-jest": "^23.10.4",
     "typescript": "^3.1.6"

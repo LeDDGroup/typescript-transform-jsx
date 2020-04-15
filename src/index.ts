@@ -31,7 +31,7 @@ class Transformer {
       " ",
       new utils.Identifier("Object")
         .access("entries")
-        .call(ts.createSpread(node.expression))
+        .call(node.expression)
         .access("map")
         .call(
           new utils.ArrowFunction(
@@ -44,6 +44,8 @@ class Transformer {
             ).getNode()
           ).getNode()
         )
+        .access("join")
+        .call(ts.createLiteral(" "))
         .getNode()
     );
   }
@@ -156,11 +158,14 @@ class Transformer {
     node: ts.JsxSelfClosingElement,
     result: utils.StringTemplateHelper
   ) {
-    const parameters = node.attributes.properties.map(
-      this.getObjectLiteralElementFromAttribute.bind(this)
-    );
+    let parameters: ts.ObjectLiteralElementLike[] = [];
     parameters.push(
       ts.createPropertyAssignment("children", ts.createLiteral(""))
+    );
+    parameters = parameters.concat(
+      node.attributes.properties.map((property) =>
+        this.getObjectLiteralElementFromAttribute(property)
+      )
     );
     result.add(
       ts.createCall(node.tagName, [], [ts.createObjectLiteral(parameters)])
@@ -177,8 +182,7 @@ class Transformer {
     }
     result.add("<", node.tagName.getText());
     this.getStringFromAttributes(node.attributes, result);
-    result.add(">");
-    result.add("</", node.tagName.getText(), ">");
+    result.add("/>");
   }
 
   getStringFromJsxExpression(
