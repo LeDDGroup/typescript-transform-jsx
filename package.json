@@ -1,6 +1,6 @@
 {
   "name": "typescript-transform-jsx",
-  "version": "1.5.1",
+  "version": "1.5.2",
   "description": "Typescript transform jsx to string",
   "keywords": [
     "jsx",
