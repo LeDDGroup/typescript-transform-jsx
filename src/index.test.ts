@@ -98,11 +98,12 @@ test("whitespace between tags", () => {
   check(
     `
 <h2>
-hello
-<span>world</span>
+    hello
+    my
+    <span>world</span>
 </h2>
 `,
-    "<h2>hello<span>world</span></h2>"
+    "<h2>hello my<span>world</span></h2>"
   );
 });
 
