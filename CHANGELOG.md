@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.5.5"></a>
+## [1.5.5](https://github.com/LeDDGroup/typescript-transform-jsx/compare/v1.5.3...v1.5.5) (2020-04-16)
+
+
+### Bug Fixes
+
+* more whitespace related fix ([f131423](https://github.com/LeDDGroup/typescript-transform-jsx/commit/f131423))
+
+
+
 <a name="1.5.3"></a>
 ## [1.5.3](https://github.com/LeDDGroup/typescript-transform-jsx/compare/v1.5.2...v1.5.3) (2020-04-16)
 
