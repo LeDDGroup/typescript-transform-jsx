@@ -80,3 +80,16 @@ return <Control label='hello' placeholder='world' type='string' />;
     '<label>hello<a placeholder="world" type="string"/></label>'
   );
 });
+
+test("spread3", () => {
+  checkf(
+    `
+const Input = ({ children, ...props }: any) => (
+  <div class="uk-width-small-1-2 uk-margin-bottom"><input class="uk-width-1-1 uk-text-contrast form_input" {...props} /></div>
+);
+return <Input type="text" placeholder="First Name*" name="First Name" required/>
+`,
+    '<div class="uk-width-small-1-2 uk-margin-bottom"><input class="uk-width-1-1 uk-text-contrast form_input" type="text" placeholder="First Name*" name="First Name" required="true"/></div>'
+  );
+});
+
