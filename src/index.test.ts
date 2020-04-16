@@ -93,3 +93,15 @@ return <Input type="text" placeholder="First Name*" name="First Name" required/>
   );
 });
 
+test("whitespace between tags", () => {
+  check(
+    `
+<h2>
+hello
+<span>world</span>
+</h2>
+`,
+    "<h2>hello<span>world</span></h2>"
+  );
+});
+// https://reactjs.org/docs/jsx-in-depth.html#string-literals-1

@@ -4,7 +4,7 @@ import * as utils from "./utils";
 const grabJsx = [
   ts.SyntaxKind.JsxElement,
   ts.SyntaxKind.JsxFragment,
-  ts.SyntaxKind.JsxSelfClosingElement
+  ts.SyntaxKind.JsxSelfClosingElement,
 ];
 
 class Transformer {
@@ -221,7 +221,7 @@ class Transformer {
         this.getStringFromJsxSelfClosingElement(node, result);
         break;
       case ts.SyntaxKind.JsxText:
-        const text = node.getFullText().replace(/\n */, "");
+        const text = node.getFullText().replace(/\n */g, "");
         result.add(text);
         break;
       case ts.SyntaxKind.JsxExpression:
