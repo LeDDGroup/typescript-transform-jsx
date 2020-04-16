@@ -221,7 +221,11 @@ class Transformer {
         this.getStringFromJsxSelfClosingElement(node, result);
         break;
       case ts.SyntaxKind.JsxText:
-        const text = node.getFullText().replace(/\n */g, "");
+        const text = node
+          .getFullText()
+          .replace(/^\n*/g, "")
+          .replace(/\n*$/g, "")
+          .replace(/\n+/g, " ");
         result.add(text);
         break;
       case ts.SyntaxKind.JsxExpression:

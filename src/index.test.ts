@@ -93,6 +93,7 @@ return <Input type="text" placeholder="First Name*" name="First Name" required/>
   );
 });
 
+// https://reactjs.org/docs/jsx-in-depth.html#string-literals-1
 test("whitespace between tags", () => {
   check(
     `
@@ -104,4 +105,17 @@ hello
     "<h2>hello<span>world</span></h2>"
   );
 });
-// https://reactjs.org/docs/jsx-in-depth.html#string-literals-1
+
+test("whitespace between text", () => {
+  check(
+    `
+<h2>
+hello
+my
+w
+<span>orld</span>
+</h2>
+`,
+    "<h2>hello my w<span>orld</span></h2>"
+  );
+});
